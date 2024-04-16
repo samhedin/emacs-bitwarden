@@ -366,7 +366,21 @@ Returns a vector of hashtables of the results."
       (let* ((json-object-type 'hash-table)
              (json-key-type 'string)
              (json (json-read-from-string result)))
-           json))))
+        json))))
+
+;;;###autoload
+(defun bitwarden-get-by-id (type id)
+  (bitwarden--handle-message (bitwarden--auto-cmd (list "get" type id))))
+
+;;;###autoload
+(defun bitwarden-get-password-by-id (id)
+  (let* ((result (bitwarden-get-by-id "item" id)))
+        (when result
+      (let* ((json-object-type 'hash-table)
+             (json-key-type 'string)
+             (json (json-read-from-string result)))
+        (gethash "password" (gethash "login" json))))))
+
 
 (defun bitwarden-folders ()
   "List bitwarden folders."
